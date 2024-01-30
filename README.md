@@ -1,3 +1,3 @@
 ## finances
 
-this is a tool to trakc my personal finances.
+this is a tool to track my personal finances.
