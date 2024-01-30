@@ -15,4 +15,4 @@ repos:
     hooks:
     -   id: mypy
         args: [--strict]
-        additional_dependencies: []
+        additional_dependencies: [polars]
