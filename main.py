@@ -1,4 +1,5 @@
 import polars as pl
+import seaborn.objects as so
 
 
 def read_data() -> pl.DataFrame:
@@ -8,7 +9,7 @@ def read_data() -> pl.DataFrame:
             pl.col("Date").str.to_date("%m/%d/%Y"),
             pl.exclude("Date", "Total", "Change", "Notes")
             .str.replace_all("[$,]", "")
-            .str.to_decimal(),
+            .cast(pl.Float64),  # to_decimal() messes up converting to pandas
         )
         .with_columns(
             Total=pl.sum_horizontal(pl.exclude("StudentLoans", "CreditCards", "Date"))
@@ -23,3 +24,5 @@ def read_data() -> pl.DataFrame:
 
 print(read_data())
 print(read_data().columns)
+so.Plot(read_data(), "Date", "Total").add(so.Line()).save("total")
+so.Plot(read_data(), "Date", "Change").add(so.Line()).save("change")

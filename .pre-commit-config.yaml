@@ -15,4 +15,4 @@ repos:
     hooks:
     -   id: mypy
         args: [--strict]
-        additional_dependencies: [polars]
+        additional_dependencies: [polars, types-seaborn]
