@@ -1,5 +1,10 @@
+import json
+
 import polars as pl
 import seaborn.objects as so
+
+with open("names.json") as f:
+    names = json.load(f)
 
 
 def read_data() -> pl.DataFrame:
@@ -9,20 +14,32 @@ def read_data() -> pl.DataFrame:
             pl.col("Date").str.to_date("%m/%d/%Y"),
             pl.exclude("Date", "Total", "Change", "Notes")
             .str.replace_all("[$,]", "")
-            .cast(pl.Float64),  # to_decimal() messes up converting to pandas
+            .cast(pl.Float64),  # str.to_decimal() messes up converting to pandas
         )
         .with_columns(
-            Total=pl.sum_horizontal(pl.exclude("StudentLoans", "CreditCards", "Date"))
-            - pl.sum_horizontal(pl.col(["StudentLoans", "CreditCards"]))
+            Total=pl.sum_horizontal(pl.exclude("Date", *names["liabilities"]))
+            - pl.sum_horizontal(pl.col(names["liabilities"]))
         )
         .with_columns(
-            PctChange=pl.col("Total").pct_change().alias("PctChange"),
+            PctChange=pl.col("Total").pct_change(),
             Change=pl.col("Total").diff(),
         )
     )
 
 
-print(read_data())
-print(read_data().columns)
-so.Plot(read_data(), "Date", "Total").add(so.Line()).save("total")
-so.Plot(read_data(), "Date", "Change").add(so.Line()).save("change")
+if __name__ == "__main__":
+    data = read_data()
+    so.Plot(data, "Date", "Total").add(so.Line()).save("total")
+    so.Plot(data, "Date", "Change").add(so.Line()).save("change")
+
+    (
+        so.Plot(
+            data.melt(
+                id_vars="Date",
+                value_vars=names["assets"],
+            ),
+            "Date",
+            "value",
+            color="variable",
+        ).add(so.Area(), so.Stack())
+    ).save("stacked")

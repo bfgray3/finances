@@ -1,3 +1,5 @@
 *.csv
+*.json
+*.png
 *.pyc
 venv
