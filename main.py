@@ -1,6 +1,7 @@
 import argparse
 import json
-from typing import Sequence, TypedDict
+from typing import Sequence
+from typing import TypedDict
 
 import polars as pl
 import seaborn.objects as so
@@ -17,7 +18,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--names", default="names.json")
     args = parser.parse_args(argv)
 
-    with open("names.json") as f:
+    with open(args.names) as f:
         names = json.load(f)
 
     data = read_data(args.csv, names)
