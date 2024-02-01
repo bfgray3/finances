@@ -24,6 +24,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     data = read_data(args.csv, names)
     so.Plot(data, "Date", "Total").add(so.Line()).save("total")
     so.Plot(data, "Date", "Change").add(so.Line()).save("change")
+    so.Plot(data, "Date", "PctChange").add(so.Line()).save("pct-change")
 
     (
         so.Plot(
