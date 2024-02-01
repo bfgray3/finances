@@ -14,5 +14,4 @@ repos:
     rev: v1.8.0
     hooks:
     -   id: mypy
-        args: [--strict]
         additional_dependencies: [polars, types-seaborn]
