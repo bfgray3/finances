@@ -26,7 +26,7 @@ finances = "finances:main"
 strict = true
 
 [tool.ruff]
-extend-select = ["I", "W", "U", "N", "B"]
+extend-select = ["I", "W", "N", "B", "UP"]
 
 [tool.ruff.lint.isort]
 force-single-line = true
