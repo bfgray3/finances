@@ -1,0 +1,4 @@
+extend-select = ["I", "W", "U", "N", "B"]
+
+[lint.isort]
+force-single-line = true
