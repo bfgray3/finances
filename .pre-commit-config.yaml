@@ -4,6 +4,9 @@ repos:
     hooks:
     -   id: end-of-file-fixer
     -   id: trailing-whitespace
+    -   id: check-yaml
+    -   id: debug-statements
+    -   id: name-tests-test
 -   repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.1.15
     hooks:
@@ -14,5 +17,4 @@ repos:
     rev: v1.8.0
     hooks:
     -   id: mypy
-        args: [--strict]
         additional_dependencies: [polars, types-seaborn]

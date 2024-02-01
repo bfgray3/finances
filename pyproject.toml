@@ -1,0 +1,32 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "finances"
+version = "0.0.0"
+description = "TODO"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "pandas>=2.0.2",  # for converting from polars for plotting
+    "polars",
+    "pyarrow",  # same as pandas
+    "seaborn",
+]
+
+[project.urls]
+Homepage = "https://github.com/bfgray3/finances"
+Repository = "https://github.com/bfgray3/finances"
+
+[project.scripts]
+finances = "finances:main"
+
+[tool.mypy]
+strict = true
+
+[tool.ruff]
+extend-select = ["I", "W", "N", "B", "UP"]
+
+[tool.ruff.lint.isort]
+force-single-line = true
