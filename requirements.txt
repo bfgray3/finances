@@ -1,3 +1,0 @@
-pandas>=2.0.2  # for converting from polars for plotting
-polars
-seaborn
