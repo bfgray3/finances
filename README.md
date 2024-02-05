@@ -4,13 +4,9 @@ this is an in-progress tool to track my personal finances.
 
 ## usage
 
-```bash
-pip install .
-finances
-```
-
-the `finances` tool has the following cli:
-```
+```console
+$ pip install .
+$ finances
 usage: main.py [-h] [--csv CSV] [--names NAMES]
 
 options:
