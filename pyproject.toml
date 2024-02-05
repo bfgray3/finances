@@ -25,7 +25,7 @@ finances = "finances:main"
 [tool.mypy]
 strict = true
 
-[tool.ruff]
+[tool.ruff.lint]
 extend-select = ["I", "W", "N", "B", "UP"]
 
 [tool.ruff.lint.isort]
