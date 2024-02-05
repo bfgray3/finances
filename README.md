@@ -4,8 +4,12 @@ this is an in-progress tool to track my personal finances.
 
 ## usage
 
-`main.py`:
+```bash
+pip install .
+finances
+```
 
+the `finances` tool has the following cli:
 ```
 usage: main.py [-h] [--csv CSV] [--names NAMES]
 
@@ -16,5 +20,13 @@ options:
 ```
 
 in the working directory there should be two files:
-    * a csv...
-    * a json file with the names of which columns are assets and which are liabilities
+* a csv...
+* a json file with the names of which columns are assets and which are liabilities
+
+
+```json
+{
+    "assets": ["Savings", "Checking"],
+    "liabilities": ["SomeLoan"]
+}
+```
