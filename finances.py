@@ -1,6 +1,6 @@
 import argparse
 import json
-from typing import Sequence
+from collections.abc import Sequence
 from typing import TypedDict
 
 import polars as pl
@@ -35,8 +35,10 @@ def main(argv: Sequence[str] | None = None) -> int:
             "Date",
             "value",
             color="variable",
-        ).add(so.Area(), so.Stack())
-    ).save("stacked")
+        )
+        .add(so.Area(), so.Stack())
+        .label(color="Asset class")
+    ).save("stacked", bbox_inches="tight")
     return 0
 
 
