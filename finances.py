@@ -22,15 +22,20 @@ def main(argv: Sequence[str] | None = None) -> int:
         names = json.load(f)
 
     data = read_data(args.csv, names)
-    so.Plot(data, "Date", "Total").add(so.Line()).save("total")
-    so.Plot(data, "Date", "Change").add(so.Line()).save("change")
-    so.Plot(data, "Date", "PctChange").add(so.Line()).save("pct-change")
+    plot(data, names["assets"])
+    return 0
+
+
+def plot(df: pl.DataFrame, asset_names: list[str]) -> None:
+    so.Plot(df, "Date", "Total").add(so.Line()).save("total")
+    so.Plot(df, "Date", "Change").add(so.Line()).save("change")
+    so.Plot(df, "Date", "PctChange").add(so.Line()).save("pct-change")
 
     (
         so.Plot(
-            data.melt(
+            df.melt(
                 id_vars="Date",
-                value_vars=names["assets"],
+                value_vars=asset_names,
             ),
             "Date",
             "value",
@@ -39,7 +44,6 @@ def main(argv: Sequence[str] | None = None) -> int:
         .add(so.Area(), so.Stack())
         .label(color="Asset class")
     ).save("stacked", bbox_inches="tight")
-    return 0
 
 
 def read_data(csv: str, names: NamesDict) -> pl.DataFrame:
