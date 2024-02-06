@@ -16,8 +16,8 @@ options:
 ```
 
 in the working directory there should be two files:
-* a csv...
-* a json file with the names of which columns are assets and which are liabilities
+* a csv (by default `balance-sheet.csv`) ...
+* a json file (by default `names.json`) with the names of which columns are assets and which are liabilities
 
 
 ```json
