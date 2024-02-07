@@ -41,7 +41,7 @@ def plot(df: pl.DataFrame, asset_names: list[str]) -> None:
             "value",
             color="variable",
         )
-        .add(so.Area(), so.Stack())
+        .add(so.Area(alpha=0.9), so.Stack())
         .label(color="Asset class")
     ).save("stacked", bbox_inches="tight")
 
