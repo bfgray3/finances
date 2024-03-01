@@ -27,9 +27,12 @@ def main(argv: Sequence[str] | None = None) -> int:
 
 
 def plot(df: pl.DataFrame, asset_names: list[str]) -> None:
-    so.Plot(df, "Date", "Total").add(so.Line()).save("total")
-    so.Plot(df, "Date", "Change").add(so.Line()).save("change")
-    so.Plot(df, "Date", "PctChange").add(so.Line()).save("pct-change")
+    so.Plot(df, "Date", "Change").add(so.Line()).scale(
+        y=so.Continuous().label(like="${x:,g}")
+    ).save("change")
+    so.Plot(df, "Date", "PctChange").add(so.Line()).scale(
+        y=so.Continuous().label(like="{x:.0%}")
+    ).label(y="Percent change").save("pct-change")
 
     (
         so.Plot(
@@ -42,7 +45,10 @@ def plot(df: pl.DataFrame, asset_names: list[str]) -> None:
             color="variable",
         )
         .add(so.Area(alpha=0.9), so.Stack())
-        .label(color="Asset class")
+        .scale(
+            y=so.Continuous().label(like="${x:,g}"),
+        )
+        .label(color="Asset class", y="Amount")
     ).save("stacked", bbox_inches="tight")
 
 
