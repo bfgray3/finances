@@ -19,3 +19,6 @@ repos:
     hooks:
     -   id: mypy
         additional_dependencies: [polars, types-seaborn]
+
+ci:
+    skip: [mypy]  # FIXME: #18
