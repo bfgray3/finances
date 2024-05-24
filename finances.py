@@ -22,7 +22,9 @@ class NamesDict(TypedDict):
 
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--csv", default="balance-sheet.csv")
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument("--csv", default="balance-sheet.csv")
+    group.add_argument("--sheet")
     parser.add_argument("--names", default="names.json")
     args = parser.parse_args(argv)
 
@@ -80,19 +82,13 @@ def read_data(csv: str, names: NamesDict) -> pl.DataFrame:
     )
 
 
-###### from https://developers.google.com/sheets/api/quickstart/python
-
-
-# The ID and range of a sample spreadsheet.
-SAMPLE_SPREADSHEET_ID = "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms"
-
-
 def prepare_creds(
     creds_file: str = "token.json",
     scopes: tuple[str, ...] = (
         "https://www.googleapis.com/auth/spreadsheets.readonly",
     ),
 ) -> Credentials:
+    # adapted from https://developers.google.com/sheets/api/quickstart/python
     if existing_creds := os.path.exists(creds_file):
         creds = Credentials.from_authorized_user_file(creds_file, scopes)
     # If there are no (valid) credentials available, let the user log in.
@@ -107,12 +103,13 @@ def prepare_creds(
     return creds
 
 
-def read_data_from_google_sheets(spreadsheet_id: str) -> pl.DataFrame:
+def read_data_from_google_sheets(
+    spreadsheet_id: str, creds: Credentials
+) -> pl.DataFrame:
+    # adapted from https://developers.google.com/sheets/api/quickstart/python
     try:
         result = (
-            build(
-                "sheets", "v4", credentials=creds
-            )  # TODO: need to get creds from somewhere
+            build("sheets", "v4", credentials=creds)
             .spreadsheets()
             .values()
             .get(spreadsheetId=spreadsheet_id)
@@ -121,10 +118,8 @@ def read_data_from_google_sheets(spreadsheet_id: str) -> pl.DataFrame:
     except HttpError as err:
         print(err)  # TODO
 
-    result["values"]  # TODO: put in a df
+    return result["values"]  # TODO: put in a df
 
-
-######
 
 if __name__ == "__main__":
     raise SystemExit(main())
