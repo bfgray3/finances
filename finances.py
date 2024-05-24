@@ -1,10 +1,18 @@
 import argparse
 import json
+import os.path
 from collections.abc import Sequence
 from typing import TypedDict
 
 import polars as pl
 import seaborn.objects as so
+from google.auth.transport.requests import Request
+from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import InstalledAppFlow
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+
+# TODO: __all__
 
 
 class NamesDict(TypedDict):
@@ -74,24 +82,18 @@ def read_data(csv: str, names: NamesDict) -> pl.DataFrame:
 
 ###### from https://developers.google.com/sheets/api/quickstart/python
 
-import os.path
-
-from google.auth.transport.requests import Request
-from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
-from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
 
 # The ID and range of a sample spreadsheet.
 SAMPLE_SPREADSHEET_ID = "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms"
-SAMPLE_RANGE_NAME = "Class Data!A2:E"
 
 
 def prepare_creds(
     creds_file: str = "token.json",
-    scopes: tuple[str, ...] = ("https://www.googleapis.com/auth/spreadsheets.readonly",)
+    scopes: tuple[str, ...] = (
+        "https://www.googleapis.com/auth/spreadsheets.readonly",
+    ),
 ) -> Credentials:
-    if (existing_creds := os.path.exists(creds_file)):
+    if existing_creds := os.path.exists(creds_file):
         creds = Credentials.from_authorized_user_file(creds_file, scopes)
     # If there are no (valid) credentials available, let the user log in.
     if not existing_creds or not creds.valid:
@@ -104,19 +106,23 @@ def prepare_creds(
             token.write(creds.to_json())  # TODO: newline???
     return creds
 
+
 def read_data_from_google_sheets(spreadsheet_id: str) -> pl.DataFrame:
     try:
         result = (
-            build("sheets", "v4", credentials=creds)
+            build(
+                "sheets", "v4", credentials=creds
+            )  # TODO: need to get creds from somewhere
             .spreadsheets()
             .values()
             .get(spreadsheetId=spreadsheet_id)
             .execute()
         )
     except HttpError as err:
-        print(err)
+        print(err)  # TODO
 
-    values = result["values"]
+    result["values"]  # TODO: put in a df
+
 
 ######
 
