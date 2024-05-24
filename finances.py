@@ -31,8 +31,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     with open(args.names) as f:
         names = json.load(f)
 
-    data = read_data(args.csv, names)
-    plot(data, names["assets"])
+    data = get_data(csv=args.csv, sheet=args.sheet, names=names)
+    plot(df=data, asset_names=names["assets"])
     return 0
 
 
@@ -69,7 +69,7 @@ def read_data(csv: str | None = None, sheet: str | None = None) -> pl.DataFrame:
         return pl.read_csv(csv)
     creds = prepare_creds()
     # error: Argument 1 to "read_data_from_google_sheets" has incompatible type "str | None"; expected "str"  [arg-type]
-    return read_data_from_google_sheets(sheet, creds)
+    return read_data_from_google_sheets(spreadsheet_id=sheet, creds=creds)
 
 
 def get_data(csv: str | None, sheet: str | None, names: NamesDict) -> pl.DataFrame:
