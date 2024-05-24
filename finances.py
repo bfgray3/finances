@@ -22,6 +22,7 @@ class NamesDict(TypedDict):
 
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
+    # TODO: need to handle # rows to skip
     group = parser.add_mutually_exclusive_group()
     group.add_argument("--csv", default="balance-sheet.csv")
     group.add_argument("--sheet")
@@ -109,7 +110,8 @@ def prepare_creds(
             flow = InstalledAppFlow.from_client_secrets_file(creds_file, scopes)
             creds = flow.run_local_server(port=0)
         with open(token_file, "w") as f:
-            f.write(creds.to_json())  # TODO: newline???
+            f.write(creds.to_json())
+            f.write("\n")
     return creds
 
 
@@ -123,8 +125,8 @@ def read_data_from_google_sheets(sheet: str, creds: Credentials) -> pl.DataFrame
             .get(spreadsheetId=sheet)
             .execute()
         )
-    except HttpError as err:
-        print(err)  # TODO
+    except HttpError as e:
+        raise RuntimeError("error reading Google sheet") from e
 
     return result["values"]  # TODO: put in a df
 
