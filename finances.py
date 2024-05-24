@@ -62,10 +62,20 @@ def plot(df: pl.DataFrame, asset_names: list[str]) -> None:
     ).save("stacked", bbox_inches="tight")
 
 
-def read_data(csv: str, names: NamesDict) -> pl.DataFrame:
+def read_data(csv: str | None = None, sheet: str | None = None) -> pl.DataFrame:
+    if not (csv is None) ^ (sheet is None):
+        ...  # TODO
+    if csv is not None:
+        return pl.read_csv(csv)
+    creds = prepare_creds()
+    # error: Argument 1 to "read_data_from_google_sheets" has incompatible type "str | None"; expected "str"  [arg-type]
+    return read_data_from_google_sheets(sheet, creds)
+
+
+def get_data(csv: str | None, sheet: str | None, names: NamesDict) -> pl.DataFrame:
+    data = read_data(csv=csv, sheet=sheet)
     return (
-        pl.read_csv(csv)
-        .select(
+        data.select(
             pl.col("Date").str.to_date("%m/%d/%Y"),
             pl.exclude("Date", "Total", "Change", "Notes")
             .str.replace_all("[$,]", "")
@@ -83,22 +93,23 @@ def read_data(csv: str, names: NamesDict) -> pl.DataFrame:
 
 
 def prepare_creds(
-    creds_file: str = "token.json",
+    token_file: str = "token.json",
+    creds_file: str = "credentials.json",
     scopes: tuple[str, ...] = (
         "https://www.googleapis.com/auth/spreadsheets.readonly",
     ),
 ) -> Credentials:
     # adapted from https://developers.google.com/sheets/api/quickstart/python
-    if existing_creds := os.path.exists(creds_file):
-        creds = Credentials.from_authorized_user_file(creds_file, scopes)
+    if existing_creds := os.path.exists(token_file):
+        creds = Credentials.from_authorized_user_file(token_file, scopes)
     if not existing_creds or not creds.valid:
         if existing_creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            flow = InstalledAppFlow.from_client_secrets_file("credentials.json", scopes)
+            flow = InstalledAppFlow.from_client_secrets_file(creds_file, scopes)
             creds = flow.run_local_server(port=0)
-        with open(creds_file, "w") as token:
-            token.write(creds.to_json())  # TODO: newline???
+        with open(token_file, "w") as f:
+            f.write(creds.to_json())  # TODO: newline???
     return creds
 
 
