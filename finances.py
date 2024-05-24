@@ -64,7 +64,7 @@ def plot(df: pl.DataFrame, asset_names: list[str]) -> None:
 
 def read_data(csv: str | None, sheet: str | None) -> pl.DataFrame:
     if not (csv is None) ^ (sheet is None):
-        ...  # TODO
+        raise ValueError("exactly one of `csv` and `sheet` should be non-None.")
     if csv is not None:
         return pl.read_csv(csv)
     creds = prepare_creds()
