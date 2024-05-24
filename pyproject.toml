@@ -9,6 +9,10 @@ description = "TODO"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
+    # TODO: make the google ones an extra
+    "google",
+    "google-api-python-client",
+    "google_auth_oauthlib",
     "pandas>=2.0.2",  # for converting from polars for plotting
     "polars",
     "pyarrow",  # same as pandas

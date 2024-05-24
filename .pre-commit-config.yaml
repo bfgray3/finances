@@ -19,4 +19,4 @@ repos:
     hooks:
     -   id: mypy
         args: [--strict]
-        additional_dependencies: [polars, types-seaborn]
+        additional_dependencies: [google, google-api-python-client, google_auth_oauthlib, polars, types-seaborn]

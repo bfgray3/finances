@@ -91,7 +91,6 @@ def prepare_creds(
     # adapted from https://developers.google.com/sheets/api/quickstart/python
     if existing_creds := os.path.exists(creds_file):
         creds = Credentials.from_authorized_user_file(creds_file, scopes)
-    # If there are no (valid) credentials available, let the user log in.
     if not existing_creds or not creds.valid:
         if existing_creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
