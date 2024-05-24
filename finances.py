@@ -82,43 +82,41 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
-# If modifying these scopes, delete the file token.json.
-SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"]
-
 # The ID and range of a sample spreadsheet.
 SAMPLE_SPREADSHEET_ID = "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms"
 SAMPLE_RANGE_NAME = "Class Data!A2:E"
 
 
-    if os.path.exists("token.json"):
-        creds = Credentials.from_authorized_user_file("token.json", SCOPES)
+def prepare_creds(
+    creds_file: str = "token.json",
+    scopes: tuple[str, ...] = ("https://www.googleapis.com/auth/spreadsheets.readonly",)
+) -> Credentials:
+    if (existing_creds := os.path.exists(creds_file)):
+        creds = Credentials.from_authorized_user_file(creds_file, scopes)
     # If there are no (valid) credentials available, let the user log in.
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
+    if not existing_creds or not creds.valid:
+        if existing_creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            flow = InstalledAppFlow.from_client_secrets_file("credentials.json", SCOPES)
+            flow = InstalledAppFlow.from_client_secrets_file("credentials.json", scopes)
             creds = flow.run_local_server(port=0)
-        # Save the credentials for the next run
-        with open("token.json", "w") as token:
-            token.write(creds.to_json())
+        with open(creds_file, "w") as token:
+            token.write(creds.to_json())  # TODO: newline???
+    return creds
 
+def read_data_from_google_sheets(spreadsheet_id: str) -> pl.DataFrame:
     try:
-        service = build("sheets", "v4", credentials=creds)
-
-        sheet = service.spreadsheets()
         result = (
-            sheet.values()
-            .get(spreadsheetId=SAMPLE_SPREADSHEET_ID, range=SAMPLE_RANGE_NAME)
+            build("sheets", "v4", credentials=creds)
+            .spreadsheets()
+            .values()
+            .get(spreadsheetId=spreadsheet_id)
             .execute()
         )
-        values = result.get("values", [])
-
-        for row in values:
-            print(f"{row[0]}, {row[4]}")
     except HttpError as err:
         print(err)
 
+    values = result["values"]
 
 ######
 
