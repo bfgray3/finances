@@ -62,14 +62,14 @@ def plot(df: pl.DataFrame, asset_names: list[str]) -> None:
     ).save("stacked", bbox_inches="tight")
 
 
-def read_data(csv: str | None = None, sheet: str | None = None) -> pl.DataFrame:
+def read_data(csv: str | None, sheet: str | None) -> pl.DataFrame:
     if not (csv is None) ^ (sheet is None):
         ...  # TODO
     if csv is not None:
         return pl.read_csv(csv)
     creds = prepare_creds()
     # error: Argument 1 to "read_data_from_google_sheets" has incompatible type "str | None"; expected "str"  [arg-type]
-    return read_data_from_google_sheets(spreadsheet_id=sheet, creds=creds)
+    return read_data_from_google_sheets(sheet=sheet, creds=creds)
 
 
 def get_data(csv: str | None, sheet: str | None, names: NamesDict) -> pl.DataFrame:
@@ -113,16 +113,14 @@ def prepare_creds(
     return creds
 
 
-def read_data_from_google_sheets(
-    spreadsheet_id: str, creds: Credentials
-) -> pl.DataFrame:
+def read_data_from_google_sheets(sheet: str, creds: Credentials) -> pl.DataFrame:
     # adapted from https://developers.google.com/sheets/api/quickstart/python
     try:
         result = (
             build("sheets", "v4", credentials=creds)
             .spreadsheets()
             .values()
-            .get(spreadsheetId=spreadsheet_id)
+            .get(spreadsheetId=sheet)
             .execute()
         )
     except HttpError as err:
