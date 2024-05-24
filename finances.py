@@ -90,14 +90,6 @@ SAMPLE_SPREADSHEET_ID = "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms"
 SAMPLE_RANGE_NAME = "Class Data!A2:E"
 
 
-def main():
-    """Shows basic usage of the Sheets API.
-    Prints values from a sample spreadsheet.
-    """
-    creds = None
-    # The file token.json stores the user's access and refresh tokens, and is
-    # created automatically when the authorization flow completes for the first
-    # time.
     if os.path.exists("token.json"):
         creds = Credentials.from_authorized_user_file("token.json", SCOPES)
     # If there are no (valid) credentials available, let the user log in.
@@ -114,7 +106,6 @@ def main():
     try:
         service = build("sheets", "v4", credentials=creds)
 
-        # Call the Sheets API
         sheet = service.spreadsheets()
         result = (
             sheet.values()
@@ -123,13 +114,7 @@ def main():
         )
         values = result.get("values", [])
 
-        if not values:
-            print("No data found.")
-            return
-
-        print("Name, Major:")
         for row in values:
-            # Print columns A and E, which correspond to indices 0 and 4.
             print(f"{row[0]}, {row[4]}")
     except HttpError as err:
         print(err)
