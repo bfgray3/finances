@@ -23,8 +23,14 @@ class NamesDict(TypedDict):
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
     # TODO: need to handle # rows to skip
-    parser.add_argument("--src")
-    parser.add_argument("--names", default="names.json")
+    parser.add_argument(
+        "--src", help="source for the data. can be a Google sheet or a local CSV"
+    )
+    parser.add_argument(
+        "--names",
+        default="names.json",
+        help="JSON file with the names of which columns are assets and which are liabilities",
+    )
     args = parser.parse_args(argv)
 
     with open(args.names) as f:
