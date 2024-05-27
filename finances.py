@@ -23,16 +23,14 @@ class NamesDict(TypedDict):
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
     # TODO: need to handle # rows to skip
-    group = parser.add_mutually_exclusive_group()
-    group.add_argument("--csv", default="balance-sheet.csv")
-    group.add_argument("--sheet")
+    parser.add_argument("--src")
     parser.add_argument("--names", default="names.json")
     args = parser.parse_args(argv)
 
     with open(args.names) as f:
         names = json.load(f)
 
-    data = get_data(csv=args.csv, sheet=args.sheet, names=names)
+    data = get_data(src=args.src, names=names)
     plot(df=data, asset_names=names["assets"])
     return 0
 
@@ -63,18 +61,15 @@ def plot(df: pl.DataFrame, asset_names: list[str]) -> None:
     ).save("stacked", bbox_inches="tight")
 
 
-def read_data(csv: str | None, sheet: str | None) -> pl.DataFrame:
-    if not (csv is None) ^ (sheet is None):
-        raise ValueError("exactly one of `csv` and `sheet` should be non-None.")
-    if csv is not None:
-        return pl.read_csv(csv)
+def read_data(src: str) -> pl.DataFrame:
+    if src.endswith(".csv"):
+        return pl.read_csv(src)
     creds = prepare_creds()
-    # error: Argument 1 to "read_data_from_google_sheets" has incompatible type "str | None"; expected "str"  [arg-type]
-    return read_data_from_google_sheets(sheet=sheet, creds=creds)
+    return read_data_from_google_sheets(sheet=src, creds=creds)
 
 
-def get_data(csv: str | None, sheet: str | None, names: NamesDict) -> pl.DataFrame:
-    data = read_data(csv=csv, sheet=sheet)
+def get_data(src: str, names: NamesDict) -> pl.DataFrame:
+    data = read_data(src=src)
     return (
         data.select(
             pl.col("Date").str.to_date("%m/%d/%Y"),
