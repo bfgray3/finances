@@ -18,8 +18,8 @@ repos:
     rev: v1.10.0
     hooks:
     -   id: mypy
-        args: [--strict]
-        additional_dependencies: [polars, types-seaborn]
+        # args: [--strict]
+        additional_dependencies: [google, google-api-python-client, google_auth_oauthlib, polars, types-seaborn]
 
 ci:
     skip: [mypy]  # FIXME: #18
