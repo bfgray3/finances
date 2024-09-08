@@ -1,0 +1,8 @@
+services:
+  db:
+    container_name: db
+    image: mysql/mysql-server
+    ports:
+      - 3306:3306
+    volumes:
+      - ./ddl.sql:/docker-entrypoint-initdb.d/ddl.sql
