@@ -6,6 +6,8 @@ from typing import TypedDict
 import polars as pl
 import seaborn.objects as so
 
+__all__ = ("plot", "read_data")
+
 
 class NamesDict(TypedDict):
     assets: list[str]
