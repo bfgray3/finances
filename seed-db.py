@@ -21,29 +21,29 @@ with open("names.json") as f:
     asset_indicators = json.load(f)
 
 
-""" from the docs
-from databases import Database
-database = Database('sqlite+aiosqlite:///example.db')
-await database.connect()
+# database = Database('sqlite+aiosqlite:///example.db')  # FIXME
+classes_query = "insert into foo.classes(name, is_asset) values (:name, :is_asset)"
 
-query = "INSERT INTO HighScores(name, score) VALUES (:name, :score)"
-values = [
-    {"name": "Daisy", "score": 92},
-    {"name": "Neil", "score": 87},
-    {"name": "Carol", "score": 43},
+asset_info = [
+    {"name": col, "is_asset": col in asset_indicators["assets"]}
+    for col in df.columns
+    if col != "Date"
 ]
-await database.execute_many(query=query, values=values)
+print(asset_info)
 
-query = "SELECT * FROM HighScores"
-rows = await database.fetch_all(query=query)
-print('High Scores:', rows)
-"""
 
-for col in set(df.columns) - {"Date"}:
-    is_asset = col in asset_indicators["assets"]
-    print(col, is_asset)
+async def main() -> None:
+    await database.connect()
+
+    await database.execute_many(query=classes_query, values=asset_info)
+
+    rows = await database.fetch_all(query="select * from foo.classes")
+    print(f"{rows=}")
 
 
 for row in df.iter_rows(named=True):
     # TODO: insert into the various tables
+    # this will be moved into main
     print(row)
+
+# asyncio.run(main())
