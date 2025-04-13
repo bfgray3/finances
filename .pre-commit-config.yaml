@@ -19,7 +19,7 @@ repos:
     hooks:
     -   id: mypy
         args: [--strict]
-        additional_dependencies: [polars>=1.0.0, types-seaborn]
+        additional_dependencies: [databases, polars>=1.0.0, types-seaborn]
 
 ci:
     skip: [mypy]  # FIXME: #18

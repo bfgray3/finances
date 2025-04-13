@@ -1,6 +1,8 @@
+import asyncio
 import json
 
 import polars as pl
+from databases import Database
 
 df = (
     pl.read_csv("balance-sheet.csv")
@@ -21,8 +23,10 @@ with open("names.json") as f:
     asset_indicators = json.load(f)
 
 
-# database = Database('sqlite+aiosqlite:///example.db')  # FIXME
-classes_query = "insert into foo.classes(name, is_asset) values (:name, :is_asset)"
+database = Database("mysql+aiomysql://localhost/finances")
+populate_classes_stmt = (
+    "insert into finances.classes(name, is_asset) values (:name, :is_asset)"
+)
 
 asset_info = [
     {"name": col, "is_asset": col in asset_indicators["assets"]}
@@ -35,15 +39,15 @@ print(asset_info)
 async def main() -> None:
     await database.connect()
 
-    await database.execute_many(query=classes_query, values=asset_info)
+    await database.execute_many(query=populate_classes_stmt, values=asset_info)
 
-    rows = await database.fetch_all(query="select * from foo.classes")
+    rows = await database.fetch_all(query="select * from finances.classes")
     print(f"{rows=}")
 
 
-for row in df.iter_rows(named=True):
-    # TODO: insert into the various tables
-    # this will be moved into main
-    print(row)
+# for row in df.iter_rows(named=True):
+# TODO: insert into the various tables
+# this will be moved into main
+#    print(row)
 
-# asyncio.run(main())
+asyncio.run(main())
