@@ -5,3 +5,10 @@ services:
       - 3306:3306
     volumes:
       - ./ddl.sql:/docker-entrypoint-initdb.d/ddl.sql
+  python:
+    build:
+      context: .
+    links:
+      - db:db
+    volumes:
+      - ./:/todo  # TODO: clean up
