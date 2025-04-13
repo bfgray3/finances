@@ -11,4 +11,4 @@ services:
     links:
       - db:db
     volumes:
-      - ./:/todo  # TODO: clean up
+      - ./:/usr/src/finances
