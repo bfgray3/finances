@@ -1,10 +1,5 @@
-**/*.pyc
-**/*.yaml
-.*ignore
-.git
-Dockerfile
-venv
-*.csv
-*.json
-*.png
-*.pyc
+*
+!**/*.csv
+!**/*.py
+!**/*.sql
+!**/*.toml
