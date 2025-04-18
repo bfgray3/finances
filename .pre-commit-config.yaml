@@ -20,6 +20,11 @@ repos:
     -   id: mypy
         args: [--strict]
         additional_dependencies: [polars>=1.0.0, types-seaborn]
+-   repo: https://github.com/asottile/pyupgrade
+    rev: v3.19.1
+    hooks:
+    -   id: pyupgrade
+        args: [--py313-plus]
 
 ci:
     skip: [mypy]  # FIXME: #18
