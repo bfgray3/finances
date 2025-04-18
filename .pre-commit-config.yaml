@@ -9,7 +9,7 @@ repos:
     -   id: debug-statements
     -   id: name-tests-test
 -   repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.11.4
+    rev: v0.11.5
     hooks:
     -   id: ruff
         args: [--fix, --exit-non-zero-on-fix]
@@ -20,6 +20,11 @@ repos:
     -   id: mypy
         args: [--strict]
         additional_dependencies: [databases, polars>=1.0.0, types-seaborn]
+-   repo: https://github.com/asottile/pyupgrade
+    rev: v3.19.1
+    hooks:
+    -   id: pyupgrade
+        args: [--py313-plus]
 
 ci:
     skip: [mypy]  # FIXME: #18
