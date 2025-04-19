@@ -23,7 +23,7 @@ with open("names.json") as f:
     asset_indicators = json.load(f)
 
 
-database = Database("mysql+aiomysql://localhost/finances")
+database = Database("mysql+aiomysql://root:foobar@db:3306")
 populate_classes_stmt = (
     "insert into finances.classes(name, is_asset) values (:name, :is_asset)"
 )

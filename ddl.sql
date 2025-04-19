@@ -1,5 +1,3 @@
-create database finances;
-
 create table if not exists finances.classes (
   id smallint not null auto_increment,
   name varchar(255) not null,
