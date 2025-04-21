@@ -37,11 +37,9 @@ print(asset_info)
 
 
 async def main() -> None:
-    await database.connect()
-
-    await database.execute_many(query=populate_classes_stmt, values=asset_info)
-
-    rows = await database.fetch_all(query="select * from finances.classes")
+    async with database.connect() as db:
+        await db.execute_many(query=populate_classes_stmt, values=asset_info)
+        rows = await db.fetch_all(query="select * from finances.classes")
     print(f"{rows=}")
 
 
