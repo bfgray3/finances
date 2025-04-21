@@ -37,10 +37,12 @@ print(asset_info)
 
 
 async def main() -> None:
-    async with database.connect() as db:
+    async with database as db:
         await db.execute_many(query=populate_classes_stmt, values=asset_info)
         rows = await db.fetch_all(query="select * from finances.classes")
-    print(f"{rows=}")
+    print("query results")
+    for r in rows:
+        print("is_asset", r.is_asset, "   ", "name", r.name)
 
 
 # for row in df.iter_rows(named=True):
