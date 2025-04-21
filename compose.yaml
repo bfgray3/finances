@@ -4,10 +4,12 @@ services:
     ports:
       - 3306:3306
     volumes:
-      - ./ddl.sql:/docker-entrypoint-initdb.d/ddl.sql
+      - ./sql/:/docker-entrypoint-initdb.d/
     environment:
       - MYSQL_ROOT_PASSWORD=foobar
       - MYSQL_DATABASE=finances
+      - MYSQL_USER=bernie
+      - MYSQL_PASSWORD=berniepw
   python:
     build:
       context: .
