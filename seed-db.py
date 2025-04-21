@@ -24,8 +24,6 @@ assert df.null_count().select(s=pl.sum_horizontal(pl.all())).row(0, named=True) 
     "s": 0
 }
 
-print(df)
-
 with open("names.json") as f:
     asset_indicators = json.load(f)
 
@@ -34,7 +32,6 @@ asset_info = [
     {"name": col, "is_asset": col in asset_indicators["assets"]}
     for col in non_date_cols
 ]
-print(asset_info)
 
 
 async def main() -> None:
