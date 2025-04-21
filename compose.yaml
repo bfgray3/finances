@@ -7,7 +7,7 @@ services:
       - ./ddl.sql:/docker-entrypoint-initdb.d/ddl.sql
     environment:
       - MYSQL_ROOT_PASSWORD=foobar
-      - MYSQL_DATABASE=my_database
+      - MYSQL_DATABASE=finances
   python:
     build:
       context: .
