@@ -22,8 +22,6 @@ print(df)
 with open("names.json") as f:
     asset_indicators = json.load(f)
 
-
-database = Database("mysql+aiomysql://bernie:berniepw@db:3306")
 populate_classes_stmt = (
     "insert into finances.classes(name, is_asset) values (:name, :is_asset)"
 )
@@ -37,7 +35,7 @@ print(asset_info)
 
 
 async def main() -> None:
-    async with database as db:
+    async with Database("mysql+aiomysql://bernie:berniepw@db:3306") as db:
         await db.execute_many(query=populate_classes_stmt, values=asset_info)
         rows = await db.fetch_all(query="select * from finances.classes")
     print("query results")
