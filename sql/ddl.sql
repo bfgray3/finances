@@ -2,7 +2,8 @@ create table if not exists finances.classes (
   id smallint not null auto_increment,
   name varchar(255) not null,
   is_asset bool not null,
-  primary key (id)
+  primary key (id),
+  unique (name)
 );
 
 create table if not exists finances.amounts (
