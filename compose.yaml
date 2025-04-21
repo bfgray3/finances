@@ -10,9 +10,16 @@ services:
       - MYSQL_DATABASE=finances
       - MYSQL_USER=bernie
       - MYSQL_PASSWORD=berniepw
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 10s
+      retries: 5
   python:
     build:
       context: .
-    command: sleep infinity
+    command: bash -c "python seed-db.py && sleep infinity"
     volumes:
       - ./:/usr/src/finances:ro
+    depends_on:
+      db:
+        condition: service_healthy
