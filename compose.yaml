@@ -1,0 +1,25 @@
+services:
+  db:
+    image: mysql/mysql-server:8.0
+    ports:
+      - 3306:3306
+    volumes:
+      - ./sql/:/docker-entrypoint-initdb.d/:ro
+    environment:
+      - MYSQL_ROOT_PASSWORD=foobar
+      - MYSQL_DATABASE=finances
+      - MYSQL_USER=bernie
+      - MYSQL_PASSWORD=berniepw
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 10s
+      retries: 5
+  python:
+    build:
+      context: .
+    command: bash -c "python seed-db.py && sleep infinity"
+    volumes:
+      - ./:/usr/src/finances:ro
+    depends_on:
+      db:
+        condition: service_healthy

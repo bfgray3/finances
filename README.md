@@ -1,6 +1,6 @@
 ## finances
 
-this is an in-progress tool to track my personal finances.
+this is an in-progress tool to track my personal finances. it's currently undergoing a major refactor so this README will be temporarily ourdated.
 
 ## usage
 
