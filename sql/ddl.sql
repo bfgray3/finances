@@ -1,9 +1,8 @@
 create table if not exists finances.classes (
   id smallint not null auto_increment,
-  name varchar(255) not null,
+  name varchar(255) unique not null,
   is_asset bool not null,
   primary key (id),
-  unique (name)
 );
 
 create table if not exists finances.amounts (
@@ -13,4 +12,5 @@ create table if not exists finances.amounts (
   class_id smallint not null,
   primary key (id),
   foreign key (class_id) references classes(id)
+  unique (day, class_id)
 );
