@@ -5,12 +5,19 @@ create table if not exists finances.classes (
   primary key (id)
 );
 
+create table if not exists finances.dates (
+  id mediumint not null auto_increment,
+  day date unique not null,
+  primary key (id),
+);
+
 create table if not exists finances.amounts (
   id mediumint not null auto_increment,
-  day date not null,
+  day_id date not null,
   amount decimal(10,2) not null,
   class_id smallint not null,
   primary key (id),
   foreign key (class_id) references classes(id),
-  unique (day, class_id)
+  foreign key (day_id) references dates(id),
+  unique (day_id, class_id)
 );
