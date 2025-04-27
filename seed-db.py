@@ -1,8 +1,12 @@
 import asyncio
 import json
+import logging
 
 import polars as pl
 from databases import Database
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 POPULATE_CLASSES_STMT = (
     "insert into finances.classes(name, is_asset) values (:name, :is_asset)"
@@ -47,11 +51,13 @@ async def main() -> None:
         await db.execute_many(query=POPULATE_CLASSES_STMT, values=asset_info)
         rows_classes = await db.fetch_all(query="select id, name from finances.classes")
         class_ids = {r.name: r.id for r in rows_classes}
+        logging.info("populated classes table")
 
         # 2. dates
         await db.execute_many(query=POPULATE_DATES_STMT, values=date_info)
         rows_dates = await db.fetch_all(query="select id, day from finances.dates")
         dates_ids = {r.day: r.id for r in rows_dates}
+        logging.info("populated dates table")
 
         # 3. amounts
         amount_info = [
@@ -67,6 +73,7 @@ async def main() -> None:
         ]
         flattened_amount_info = [entry for entries in amount_info for entry in entries]
         await db.execute_many(query=POPULATE_AMOUNTS_STMT, values=flattened_amount_info)
+        logging.info("populated amounts table")
 
         # 4. comments
         comment_info = [
@@ -74,6 +81,7 @@ async def main() -> None:
             for r in df.iter_rows(named=True)
         ]
         await db.execute_many(query=POPULATE_COMMENTS_STMT, values=comment_info)
+        logging.info("populated comments table")
 
 
 if __name__ == "__main__":
