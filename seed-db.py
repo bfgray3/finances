@@ -47,19 +47,20 @@ date_info = [{"day": d} for d in df["Date"]]
 
 async def main() -> None:
     async with Database("mysql+aiomysql://bernie:berniepw@db:3306") as db:
-        # 1. classes
-        await db.execute_many(query=POPULATE_CLASSES_STMT, values=asset_info)
+        # classes and dates
+        await asyncio.gather(
+            db.execute_many(query=POPULATE_CLASSES_STMT, values=asset_info),
+            db.execute_many(query=POPULATE_DATES_STMT, values=date_info),
+        )
+        logging.info("populated classes and dates tables")
+
         rows_classes = await db.fetch_all(query="select id, name from finances.classes")
         class_ids = {r.name: r.id for r in rows_classes}
-        logging.info("populated classes table")
 
-        # 2. dates
-        await db.execute_many(query=POPULATE_DATES_STMT, values=date_info)
         rows_dates = await db.fetch_all(query="select id, day from finances.dates")
         dates_ids = {r.day: r.id for r in rows_dates}
-        logging.info("populated dates table")
 
-        # 3. amounts
+        # amounts and comments
         amount_info = [
             [
                 {
@@ -72,16 +73,17 @@ async def main() -> None:
             for r in df.iter_rows(named=True)
         ]
         flattened_amount_info = [entry for entries in amount_info for entry in entries]
-        await db.execute_many(query=POPULATE_AMOUNTS_STMT, values=flattened_amount_info)
-        logging.info("populated amounts table")
 
-        # 4. comments
         comment_info = [
             {"day_id": dates_ids[r["Date"]], "comments": r["Notes"]}
             for r in df.iter_rows(named=True)
         ]
-        await db.execute_many(query=POPULATE_COMMENTS_STMT, values=comment_info)
-        logging.info("populated comments table")
+
+        await asyncio.gather(
+            db.execute_many(query=POPULATE_AMOUNTS_STMT, values=flattened_amount_info),
+            db.execute_many(query=POPULATE_COMMENTS_STMT, values=comment_info),
+        )
+        logging.info("populated amounts and comments tables")
 
 
 if __name__ == "__main__":
