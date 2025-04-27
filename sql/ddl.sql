@@ -8,7 +8,7 @@ create table if not exists finances.classes (
 create table if not exists finances.dates (
   id mediumint not null auto_increment,
   day date unique not null,
-  primary key (id),
+  primary key (id)
 );
 
 create table if not exists finances.amounts (
@@ -25,7 +25,7 @@ create table if not exists finances.amounts (
 create table if not exists finances.comments (
   id mediumint not null auto_increment,
   day_id mediumint not null,
-  comments varchar(255) not null,
+  comments varchar(255),
   primary key (id),
   foreign key (day_id) references dates(id),
   unique (day_id)
