@@ -24,7 +24,7 @@ df = (
     )
 )
 
-non_date_cols = [c for c in df.columns if c != "Date"]
+non_date_cols = [c for c in df.columns if c not in frozenset(("Date", "Notes"))]
 
 assert df.drop("Notes").null_count().select(s=pl.sum_horizontal(pl.all())).row(
     0, named=True
@@ -45,12 +45,12 @@ async def main() -> None:
     async with Database("mysql+aiomysql://bernie:berniepw@db:3306") as db:
         # 1. classes
         await db.execute_many(query=POPULATE_CLASSES_STMT, values=asset_info)
-        rows_classes = await db.fetch_all(query="select * from finances.classes")
+        rows_classes = await db.fetch_all(query="select id, name from finances.classes")
         class_ids = {r.name: r.id for r in rows_classes}
 
         # 2. dates
         await db.execute_many(query=POPULATE_DATES_STMT, values=date_info)
-        rows_dates = await db.fetch_all(query="select * from finances.dates")
+        rows_dates = await db.fetch_all(query="select id, day from finances.dates")
         dates_ids = {r.day: r.id for r in rows_dates}
 
         # 3. amounts
