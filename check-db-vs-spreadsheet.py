@@ -3,27 +3,32 @@ from polars.testing import assert_frame_equal
 
 URI = "mysql://bernie:berniepw@db:3306"
 QUERY = """\
-select a.day,
+select d.day as Date,
   a.amount,
-  c.name
+  cl.name,
+  co.comments as Notes
 from finances.amounts a
-inner join finances.classes c
-  on a.class_id = c.id
+inner join finances.classes cl
+  on a.class_id = cl.id
+inner join finances.dates d
+  on d.id = a.day_id
+inner join finances.comments as co
+  on d.id = co.day_id
 """
 
 spreadsheet = (
     pl.read_csv("balance-sheet.csv")
-    .select(pl.exclude("Notes", "Change", "Total"))
+    .select(pl.exclude("Change", "Total"))
     .with_columns(pl.exclude("Date").str.replace_all("[,$]", ""))
     .select(
-        pl.col("Date").str.to_date("%-m/%-d/%Y"), pl.exclude("Date").cast(pl.Float64)
+        "Notes",
+        pl.col("Date").str.to_date("%-m/%-d/%Y"),
+        pl.exclude("Date", "Notes").cast(pl.Float64),
     )
 )
 
-db = (
-    pl.read_database_uri(query=QUERY, uri=URI)
-    .pivot("name", index="day", values="amount")
-    .rename({"day": "Date"})
+db = pl.read_database_uri(query=QUERY, uri=URI).pivot(
+    "name", index=("Date", "Notes"), values="amount"
 )
 
 assert_frame_equal(
