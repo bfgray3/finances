@@ -55,6 +55,9 @@ def plot(df: pl.DataFrame, asset_names: list[str]) -> None:
 
 
 def read_data(csv: str, names: NamesDict) -> pl.DataFrame:
+    pct_change_expr = pl.when(
+        ~((pl.col("Total") > 0.0) & (pl.col("Total").shift() < 0.0))
+    ).then((pl.col("Total") - pl.col("Total").shift()) / pl.col("Total").shift().abs())
     return (
         pl.read_csv(csv)
         .select(
@@ -68,7 +71,7 @@ def read_data(csv: str, names: NamesDict) -> pl.DataFrame:
             - pl.sum_horizontal(pl.col(names["liabilities"]))
         )
         .with_columns(
-            PctChange=pl.col("Total").pct_change(),
+            PctChange=pct_change_expr,
             Change=pl.col("Total").diff(),
         )
     )
