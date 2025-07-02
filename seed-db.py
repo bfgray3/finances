@@ -30,9 +30,10 @@ df = (
 
 non_date_cols = [c for c in df.columns if c not in frozenset(("Date", "Notes"))]
 
-assert df.drop("Notes").null_count().select(s=pl.sum_horizontal(pl.all())).row(
+if df.drop("Notes").null_count().select(s=pl.sum_horizontal(pl.all())).row(
     0, named=True
-) == {"s": 0}
+) != {"s": 0}:
+    raise AssertionError
 
 with open("names.json") as f:
     asset_indicators = json.load(f)
@@ -55,10 +56,10 @@ async def main() -> None:
         logging.info("populated classes and dates tables")
 
         rows_classes = await db.fetch_all(query="select id, name from finances.classes")
-        class_ids = {r.name: r.id for r in rows_classes}
+        class_ids = {r["name"]: r["id"] for r in rows_classes}
 
         rows_dates = await db.fetch_all(query="select id, day from finances.dates")
-        dates_ids = {r.day: r.id for r in rows_dates}
+        dates_ids = {r["day"]: r["id"] for r in rows_dates}
 
         # amounts and comments
         amount_info = [
